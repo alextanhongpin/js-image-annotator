@@ -10,6 +10,7 @@ class ImageAnnotate extends HTMLElement {
     const shadow = this.attachShadow({ mode: "open" });
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
+    const img = document.createElement("img");
 
     // Separate annotation canvas from display canvas.
     // This prevents redrawing the image every time a box is added or removed.
@@ -22,7 +23,14 @@ class ImageAnnotate extends HTMLElement {
     annotator.addEventListener("boxAdded", (e) => {
       const data = e.detail;
       const span = document.createElement("span");
-      span.textContent = `${data.label} (x: ${data.x}, y: ${data.y}, width: ${data.width}, height: ${data.height})`;
+
+      const xMid = (data.x + data.width / 2) / img.width
+      const yMid = (data.y + data.height / 2) / img.height
+      const width = data.width / img.width
+      const height = data.height / img.height
+
+      //span.textContent = `${data.label} (x: ${data.x}, y: ${data.y}, width: ${data.width}, height: ${data.height} ${img.width} ${img.height})`;
+      span.textContent = `${data.label} ${xMid} ${yMid} ${width} ${height}`;
       span.onclick = () => {
         annotator.removeBox(data);
       };
@@ -62,7 +70,6 @@ class ImageAnnotate extends HTMLElement {
       });
     });
 
-    const img = document.createElement("img");
     img.src = this.getAttribute("src");
     img.width = 300;
     img.onload = () => {
@@ -133,7 +140,11 @@ class ImageAnnotate extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    console.log(`Attribute ${name} has changed.`, oldValue, newValue);
+    if (name === 'src') {
+      const img = this.shadowRoot?.querySelector('img')
+      if (img) img.src = newValue;
+    }
+    console.log(this.constructor.name, `Attribute ${name} has changed.`, oldValue, newValue);
   }
 }
 

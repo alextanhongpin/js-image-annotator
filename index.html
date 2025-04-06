@@ -10,6 +10,10 @@
 <body>
   <h1>My First Web Page</h1>
 
+  <div>
+    <input type="file" accept='image/*' name='image'/>
+  </div>
+
   <img-annotate src="public/images/apple.jpg">
     <img-box
       data-x="50"
@@ -28,4 +32,14 @@
     ></img-box>
   </img-annotate>
   <script src="./src/index.js" type="module"></script>
+  <script>
+
+  document.querySelector('input[type="file"]').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const imgAnnotate = document.querySelector('img-annotate');
+      imgAnnotate.setAttribute('src', URL.createObjectURL(file));
+    }
+  });
+  </script>
 </body>
