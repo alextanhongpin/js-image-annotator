@@ -91,6 +91,9 @@ class ImageAnnotate extends HTMLElement {
 
     const style = document.createElement("style");
     style.textContent = `
+      :host {
+        border: 1px solid black;
+      }
       canvas {
         position: absolute;
       }
