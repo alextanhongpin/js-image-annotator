@@ -1,2 +1,2 @@
-import './img-box.js';
-import './img-annotate.js';
+import "./img-box.js";
+import "./img-annotate.js";
