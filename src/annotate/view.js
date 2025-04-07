@@ -36,7 +36,5 @@ export class ToolBoxView {
         </div>
       `;
     }
-
-    return Array.from(document.querySelectorAll(".box"));
   }
 }

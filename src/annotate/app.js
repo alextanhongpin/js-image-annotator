@@ -1,11 +1,10 @@
-import { BoxModel, ImageModel } from "./model.js";
+import { State } from "./model.js";
 import { CanvasAnnotatorController } from "./controller.js";
 import { CanvasView, ToolBoxView } from "./view.js";
 
 class App {
   constructor() {
-    this.box = new BoxModel();
-    this.img = new ImageModel();
+    this.state = new State();
 
     this.init();
   }
@@ -19,48 +18,68 @@ class App {
     const preview = document.querySelector("img");
     const toolbox = new ToolBoxView(document.getElementById("toolbox"));
 
-    this.img.setSrc(preview.src);
-
     // Controllers.
     overlay.addEventListener("change", (evt) => {
       const box = evt.detail;
-      this.box.add({
-        id: performance.timeOrigin + performance.now(),
-        ...box,
+      this.state.store("boxes", (boxes = []) => {
+        const newBox = {
+          id: performance.timeOrigin + performance.now(),
+          ...box,
+        };
+
+        return [...boxes, newBox];
       });
     });
 
     imgPicker.addEventListener("change", (evt) => {
       const files = evt.target.files;
-      this.img.setSrc(URL.createObjectURL(files[0]));
+      const src = URL.createObjectURL(files[0]);
+      this.state.store("img/src", src);
     });
 
     // Views.
-    this.img.addEventListener("resize", () => {
-      overlay.el.width = this.img.width;
-      overlay.el.height = this.img.height;
+    this.state.on({
+      "img/size": (evt) => {
+        const { width, height } = evt.detail;
+        overlay.el.width = width;
+        overlay.el.height = height;
 
-      display.el.width = this.img.width;
-      display.el.height = this.img.height;
-    });
+        display.el.width = width;
+        display.el.height = height;
+      },
+      "img/src": (evt) => {
+        preview.src = evt.detail;
 
-    this.box.addEventListener("change", () => {
-      const boxes = this.box.boxes;
-      display.render(boxes);
+        const img = new Image();
+        img.onload = () => {
+          this.state.store("img/size", {
+            width: img.width,
+            height: img.height,
+          });
+        };
+        img.src = evt.detail;
+      },
+      boxes: (evt) => {
+        const boxes = evt.detail || [];
+        display.render(boxes);
+        toolbox.render(boxes);
 
-      toolbox.render(boxes).forEach((box) => {
-        const button = box.querySelector(".delete-box");
-        button.addEventListener("click", (evt) => {
-          const boxId = Number(evt.target.dataset.id);
-          this.box.remove(Number(boxId));
+        Array.from(toolbox.el.querySelectorAll(".box")).forEach((box) => {
+          const button = box.querySelector(".delete-box");
+          button.addEventListener("click", (evt) => {
+            const boxId = Number(evt.target.dataset.id);
+            const boxes = this.state.load("boxes");
+            this.state.store("boxes", (boxes) => {
+              return boxes.filter((box) => box.id !== boxId);
+            });
+          });
         });
-      });
+      },
     });
 
-    this.img.addEventListener("change", () => {
-      preview.src = this.img.src;
-    });
+    // This must be after registering...
+    this.state.store("img/src", preview.src);
   }
 }
 
-new App();
+window.App = window.App || new App();
