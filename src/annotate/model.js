@@ -17,6 +17,14 @@ export class BoxModel extends EventTarget {
     // We don't publish states changes, the view has to retrieve it from the model.
     this.dispatchEvent(new Event("change"));
   }
+
+  remove(id) {
+    // Update state.
+    this.boxes = this.boxes.filter((box) => box.id !== id);
+
+    // Publish event.
+    this.dispatchEvent(new Event("change"));
+  }
 }
 
 export class ImageModel extends EventTarget {

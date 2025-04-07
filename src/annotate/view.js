@@ -18,3 +18,25 @@ export class CanvasView {
     });
   }
 }
+
+export class ToolBoxView {
+  constructor(el) {
+    this.el = el;
+  }
+
+  render(boxes) {
+    this.el.innerHTML = ``;
+
+    for (let box of boxes) {
+      this.el.innerHTML += `
+        <div class="box" data-id="${box.id}">
+          <span class="box-id">${box.id}</span>
+          <span class="box-coordinates">${box.x}, ${box.y}, ${box.width}, ${box.height}</span>
+          <button class="delete-box" data-id="${box.id}">Delete</button>
+        </div>
+      `;
+    }
+
+    return Array.from(document.querySelectorAll(".box"));
+  }
+}
