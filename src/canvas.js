@@ -11,12 +11,12 @@ export function annotate() {
 
   canvas.addEventListener("mousemove", (e) => {
     const end = getPosition(e);
+
     clear();
     drawGuideLines(end);
     if (!isDrawing) return;
 
-    const rect = computeRect(start, end);
-    drawRect(rect);
+    drawRect(computeRect(start, end));
   });
 
   canvas.addEventListener("mouseup", (e) => {
@@ -33,8 +33,6 @@ export function annotate() {
     isDrawing = false;
     clear();
   });
-
-  canvas.addEventListener("click", (e) => {});
 
   function clear() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);

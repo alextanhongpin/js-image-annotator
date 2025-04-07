@@ -1,0 +1,23 @@
+<head>
+  <style>
+    canvas {
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <h1>Annotate</h1>
+
+  <div>
+    <input type="file" accept="image/*" name="image" />
+  </div>
+
+  <div>
+    <!--The order is important-->
+    <canvas id="display"></canvas>
+    <canvas id="overlay"></canvas>
+    <img src="/public/images/apple.jpg" />
+  </div>
+
+  <script src="./src/annotate/app.js" type="module"></script>
+</body>
