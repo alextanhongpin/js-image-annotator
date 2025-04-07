@@ -4,4 +4,3 @@ run:
 
 lint:
 	prettier -w .
-

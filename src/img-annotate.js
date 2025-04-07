@@ -24,10 +24,10 @@ class ImageAnnotate extends HTMLElement {
       const data = e.detail;
       const span = document.createElement("span");
 
-      const xMid = (data.x + data.width / 2) / img.width
-      const yMid = (data.y + data.height / 2) / img.height
-      const width = data.width / img.width
-      const height = data.height / img.height
+      const xMid = (data.x + data.width / 2) / img.width;
+      const yMid = (data.y + data.height / 2) / img.height;
+      const width = data.width / img.width;
+      const height = data.height / img.height;
 
       //span.textContent = `${data.label} (x: ${data.x}, y: ${data.y}, width: ${data.width}, height: ${data.height} ${img.width} ${img.height})`;
       span.textContent = `${data.label} ${xMid} ${yMid} ${width} ${height}`;
@@ -140,11 +140,16 @@ class ImageAnnotate extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'src') {
-      const img = this.shadowRoot?.querySelector('img')
+    if (name === "src") {
+      const img = this.shadowRoot?.querySelector("img");
       if (img) img.src = newValue;
     }
-    console.log(this.constructor.name, `Attribute ${name} has changed.`, oldValue, newValue);
+    console.log(
+      this.constructor.name,
+      `Attribute ${name} has changed.`,
+      oldValue,
+      newValue,
+    );
   }
 }
 

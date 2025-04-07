@@ -1,0 +1,74 @@
+<head>
+  <style></style>
+</head>
+<body>
+  <h1>FileLoader</h1>
+
+  <div>
+    <input type="file" accept="image/*" name="image" multiple />
+  </div>
+
+  <div id="output"></div>
+
+  <script>
+    class FileViewer {
+      constructor(el) {
+        this.el = el;
+      }
+
+      render(files) {
+        console.log("files", files);
+        this.el.innerHTML = "";
+        for (let file of files) {
+          const span = document.createElement("span");
+          span.textContent = file.name;
+          this.el.appendChild(span);
+        }
+      }
+
+      listen(model, element) {
+        model.addEventListener("change", (evt) => {
+          this.render(model.files);
+        });
+      }
+    }
+
+    class FileModel extends EventTarget {
+      constructor() {
+        super();
+        this.files = [];
+        this.cache = new Set();
+      }
+
+      add(files) {
+        const newFiles = [];
+        for (let file of files) {
+          if (this.cache.has(file.name)) {
+            continue;
+          }
+          this.cache.add(file.name);
+          newFiles.push(file);
+        }
+
+        this.files.push(...newFiles);
+        this.dispatchEvent(new Event("change"));
+      }
+    }
+
+    // Model stores the state and is responsible for managing the data.
+    // Model can be subscribed to by the view.
+    const fileModel = new FileModel();
+
+    // Controller modifies the state.
+    document
+      .querySelector('input[name="image"]')
+      .addEventListener("change", (event) => {
+        fileModel.add(event.target.files);
+      });
+
+    // View
+    const fileViewer = new FileViewer(document.getElementById("output"));
+    // Subscribe to model changes.
+    fileViewer.listen(fileModel);
+  </script>
+</body>
